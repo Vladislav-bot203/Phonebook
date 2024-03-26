@@ -29,12 +29,12 @@ const App = () => {
     if (confirmation) {
       personServices
         .deletePerson(person.id)
-        .then((personToDelete) => {
+        .then(personToDelete => {
           setPersons(
-            persons.filter((person) => person.id !== personToDelete.id)
-          );
+            persons.filter((p => p.id !== person.id)
+          ));
           setNotifications({
-            message: `The ${personToDelete.name} has been deleted`,
+            message: `The ${person.name} has been deleted`,
             result: true,
           });
           setTimeout(
