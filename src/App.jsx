@@ -29,7 +29,7 @@ const App = () => {
     if (confirmation) {
       personServices
         .deletePerson(person.id)
-        .then(personToDelete => {
+        .then(result => {
           setPersons(
             persons.filter((p => p.id !== person.id)
           ));
