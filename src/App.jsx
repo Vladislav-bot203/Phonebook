@@ -21,8 +21,8 @@ const App = () => {
     shown === ""
       ? persons
       : persons.filter((person) =>
-          person.name.toLocaleLowerCase().startsWith(shown.toLocaleLowerCase())
-        );
+        person.name.toLocaleLowerCase().startsWith(shown.toLocaleLowerCase())
+      );
 
   const deletePerson = (person) => {
     const confirmation = window.confirm(`Delete ${person.name}?`);
@@ -32,7 +32,7 @@ const App = () => {
         .then(result => {
           setPersons(
             persons.filter((p => p.id !== person.id)
-          ));
+            ));
           setNotifications({
             message: `The ${person.name} has been deleted`,
             result: true,
@@ -103,20 +103,30 @@ const App = () => {
               setNotifications({ message: null, result: null });
             }, 3000);
           })
-          .catch((error) => {
-            console.log(error);
-            setNotifications({
-              message: `Information of ${foundPerson.name} has already been removed from server`,
-              result: false,
-            });
-            setPersons(
-              persons.filter((person) => person.id !== foundPerson.id)
-            );
-            setTimeout(
-              () => setNotifications({ message: null, result: null }),
-              3000
-            );
-          });
+          .catch(error => {
+            if (error.response.data.name === "ValidationError") {
+              setNotifications({
+                message: error.response.data.error,
+                result: false,
+              });
+              setTimeout(
+                () => setNotifications({ message: null, result: null }),
+                3000
+              );
+            } else {
+              setNotifications({
+                message: `Information of ${foundPerson.name} has already been removed from server`,
+                result: false,
+              });
+              setPersons(
+                persons.filter((person) => person.id !== foundPerson.id)
+              );
+              setTimeout(
+                () => setNotifications({ message: null, result: null }),
+                3000
+              );
+            }
+          })
       } else {
         setNotifications({
           message: `Denied update ${foundPerson.name}`,
@@ -141,15 +151,13 @@ const App = () => {
           }, 3000);
         })
         .catch((error) => {
-          console.log(error);
           setNotifications({
-            message: `Information of ${foundPerson.name} has already been removed from server`,
+            message: error.response.data.error,
             result: false,
           });
-          setPersons(persons.filter(person.id !== foundPerson.id));
           setTimeout(() => {
             setNotifications({ message: null, result: null });
-          });
+          }, 3000);
         });
     }
     setNewName("newName");
